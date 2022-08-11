@@ -1,55 +1,37 @@
 #include "sort.h"
 
 /**
-* swapem - Swaps tha nodes
-* @l: left or lower node
-* @r: right or later node
-* @h: Head of dlist
-*/
-
-void swapem(listint_t *l, listint_t *r, listint_t **h)
-{
-	listint_t *temp;
-
-	temp = l->prev;
-	if (temp)
-		temp->next = r;
-	r->prev = temp;
-	l->prev = r;
-	l->next = r->next;
-	r->next = l;
-	if (l->next != NULL)
-		l->next->prev = l;
-	if (r->prev == NULL)
-		*h = r;
-	print_list(*h);
-}
-
-/**
-* insertion_sort_list - sorts a doubly linked list of integers
-* @list: Head of dlist
-*/
+ * insertion_sort_list - sorts a doubly linked list of integers using insertion
+ * sort algorithm
+ * @list: unsorted doubly linked list
+ *
+ * Return: void
+ */
 
 void insertion_sort_list(listint_t **list)
 {
-	listint_t *curr, *next, *prev, *prev2;
+	listint_t *cur_node, *next_swap;
 
-	if (list == NULL)
+	if (list == NULL || *list == NULL)
 		return;
-
-	curr = next = *list;
-	while (curr != NULL)
+	cur_node = (*list)->next;
+	while (cur_node != NULL)
 	{
-		while (curr->prev != NULL)
+		next_swap = cur_node->next;
+		while (cur_node->prev != NULL && cur_node->prev->n > cur_node->n)
 		{
-			prev = curr->prev;
-			prev2 = prev;
-			if (prev->n > curr->n)
-				swapem(prev, curr, list);
-			curr = prev2;
+			cur_node->prev->next = cur_node->next;
+			if (cur_node->next != NULL)
+				cur_node->next->prev = cur_node->prev;
+			cur_node->next = cur_node->prev;
+			cur_node->prev = cur_node->next->prev;
+			cur_node->next->prev = cur_node;
+			if (cur_node->prev == NULL)
+				*list = cur_node;
+			else
+				cur_node->prev->next = cur_node;
+			print_list(*list);
 		}
-		curr = next->next;
-		next = curr;
+		cur_node = next_swap;
 	}
-
 }
